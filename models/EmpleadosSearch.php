@@ -18,7 +18,7 @@ class EmpleadosSearch extends Empleados
     {
         return [
             [['idempleados'], 'integer'],
-            [['nombre', 'email', 'cargo', 'fecha_ingreso'], 'safe'],
+            [['nombre', 'email', 'cargo', 'image_path', 'fecha_ingreso'], 'safe'],
         ];
     }
 
@@ -65,7 +65,8 @@ class EmpleadosSearch extends Empleados
 
         $query->andFilterWhere(['like', 'nombre', $this->nombre])
             ->andFilterWhere(['like', 'email', $this->email])
-            ->andFilterWhere(['like', 'cargo', $this->cargo]);
+            ->andFilterWhere(['like', 'cargo', $this->cargo])
+            ->andFilterWhere(['like', 'image_path', $this->image_path]);
 
         return $dataProvider;
     }

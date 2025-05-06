@@ -33,6 +33,20 @@ $this->params['breadcrumbs'][] = $this->title;
             'nombre',
             'email:email',
             'cargo',
+            [
+                'attribute' => 'image_path',
+                'format' => 'html',
+                'value' => function($model) {
+                    if ($model->image_path) {
+                        return Html::img($model->image_path, [
+                            'style' => 'max-width: 300px; max-height: 300px;',
+                            'class' => 'img-thumbnail',
+                            'alt' => 'Immagen',
+                        ]);
+                    }
+                    return 'No hay imagen';
+                },
+            ],
             'fecha_ingreso',
         ],
     ]) ?>

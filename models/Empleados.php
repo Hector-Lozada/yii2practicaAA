@@ -1,8 +1,8 @@
 <?php
 
 namespace app\models;
-
 use Yii;
+use yii\web\UploadedFile;
 
 /**
  * This is the model class for table "empleados".
@@ -11,6 +11,7 @@ use Yii;
  * @property string|null $nombre
  * @property string|null $email
  * @property string|null $cargo
+ * @property string|null $image_path
  * @property string|null $fecha_ingreso
  *
  * @property Asignaciones[] $asignaciones
@@ -18,7 +19,7 @@ use Yii;
  */
 class Empleados extends \yii\db\ActiveRecord
 {
-
+    public $imageFile; // Atributo para el archivo de imagen
 
     /**
      * {@inheritdoc}
@@ -34,9 +35,11 @@ class Empleados extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['nombre', 'email', 'cargo', 'fecha_ingreso'], 'default', 'value' => null],
+            [['nombre', 'email', 'cargo', 'image_path', 'fecha_ingreso'], 'default', 'value' => null],
             [['fecha_ingreso'], 'safe'],
             [['nombre', 'email', 'cargo'], 'string', 'max' => 100],
+            [['image_path'], 'string', 'max' => 255],
+            [['imageFile'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg, gif', 'maxSize' => 5 * 1024 * 1024], // 5MB
         ];
     }
 
@@ -50,9 +53,56 @@ class Empleados extends \yii\db\ActiveRecord
             'nombre' => Yii::t('app', 'Nombre'),
             'email' => Yii::t('app', 'Email'),
             'cargo' => Yii::t('app', 'Cargo'),
+            'image_path' => 'Imagen',
+            'imageFile' => 'Subir Imagen',
             'fecha_ingreso' => Yii::t('app', 'Fecha Ingreso'),
         ];
     }
+
+    public function upload()
+    {
+        if ($this->imageFile) {
+            $uploadDir = Yii::getAlias('@webroot/uploads/avatars/');
+            if (!file_exists($uploadDir)) {
+                mkdir($uploadDir, 0775, true);
+            }
+
+            $fileName = uniqid() . '.' . $this->imageFile->extension;
+            $filePath = $uploadDir . $fileName;
+
+            if ($this->imageFile->saveAs($filePath)) {
+                $this->image_path = '/uploads/avatars/' . $fileName;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Elimina la imagen asociada
+     */
+    public function deleteImage()
+    {
+        if ($this->image_path && file_exists(Yii::getAlias('@webroot' . $this->image_path))) {
+            unlink(Yii::getAlias('@webroot' . $this->image_path));
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Before delete hook
+     */
+    public function beforeDelete()
+    {
+        if (!parent::beforeDelete()) {
+            return false;
+        }
+
+        $this->deleteImage();
+        return true;
+    }
+
 
     /**
      * Gets query for [[Asignaciones]].

@@ -40,13 +40,17 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
         'options' => ['class' => 'navbar-nav'],
         'items' => [
             ['label' => 'Home', 'url' => ['/site/index']],
-            ['label' => 'About', 'url' => ['/site/about']],
-            ['label' => 'Contact', 'url' => ['/site/contact']],
-            ['label' => 'Asignaciones', 'url' => ['/asignaciones/index']],
-            ['label' => 'Comentarios', 'url' => ['/comentarios/index']],
-            ['label' => 'Empleados', 'url' => ['/empleados/index']],
-            ['label' => 'Proyectos', 'url' => ['/proyectos/index']],
-            ['label' => 'Tareas', 'url' => ['/tareas/index']],
+            //['label' => 'About', 'url' => ['/site/about']],
+            //['label' => 'Contact', 'url' => ['/site/contact']],
+            ['label' => 'Gestion de Proyectos',
+                'items' => [
+                    ['label' => 'Empleados', 'url' => ['/empleados/index']],
+                    ['label' => 'Proyectos', 'url' => ['/proyectos/index']],
+                    ['label' => 'Tareas', 'url' => ['/tareas/index']],
+                    ['label' => 'Asignaciones', 'url' => ['/asignaciones/index']],
+                    ['label' => 'Comentarios', 'url' => ['/comentarios/index']],
+                ]
+                ],
             Yii::$app->user->isGuest
                 ? ['label' => 'Login', 'url' => ['/site/login']]
                 : '<li class="nav-item">'
