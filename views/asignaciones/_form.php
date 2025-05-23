@@ -17,25 +17,61 @@ use app\models\Empleados;
 
     <div class="row">
         <div class="col-md-6">
-            <?= $form->field($model, 'tarea_id')->dropDownList(
-                ArrayHelper::map(Tareas::find()->all(), 'idtareas', 'titulo'),
-                [
-                    'prompt' => 'Seleccione una tarea...',
-                    'required' => true,
-                    'class' => 'form-control'
-                ]
-            )->label('Tarea <span class="text-danger">*</span>') ?>
+            <div class="form-group">
+                <label class="control-label">Tarea <span class="text-danger">*</span></label>
+                <div class="input-group">
+                    <?= $form->field($model, 'tarea_id', [
+                        'template' => "{input}",
+                        'options' => ['class' => 'flex-grow-1']
+                    ])->dropDownList(
+                        ArrayHelper::map(Tareas::find()->all(), 'idtareas', 'titulo'),
+                        [
+                            'prompt' => 'Seleccione una tarea...',
+                            'required' => true,
+                            'class' => 'form-control'
+                        ]
+                    )->label(false) ?>
+                    <div class="input-group-append">
+                        <?= Html::a('Nueva Tarea', 
+                            ['tareas/create'], 
+                            [
+                                'class' => 'btn btn-success',
+                                'title' => 'Crear nueva tarea',
+                                'target' => '_blank',
+                                'style' => 'white-space: nowrap;'
+                            ]) ?>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="col-md-6">
-            <?= $form->field($model, 'empleado_id')->dropDownList(
-                ArrayHelper::map(Empleados::find()->all(), 'idempleados', 'nombre'),
-                [
-                    'prompt' => 'Seleccione un empleado...',
-                    'required' => true,
-                    'class' => 'form-control'
-                ]
-            )->label('Empleado <span class="text-danger">*</span>') ?>
+            <div class="form-group">
+                <label class="control-label">Empleado <span class="text-danger">*</span></label>
+                <div class="input-group">
+                    <?= $form->field($model, 'empleado_id', [
+                        'template' => "{input}",
+                        'options' => ['class' => 'flex-grow-1']
+                    ])->dropDownList(
+                        ArrayHelper::map(Empleados::find()->all(), 'idempleados', 'nombre'),
+                        [
+                            'prompt' => 'Seleccione un empleado...',
+                            'required' => true,
+                            'class' => 'form-control'
+                        ]
+                    )->label(false) ?>
+                    <div class="input-group-append">
+                        <?= Html::a('Nuevo Empleado', 
+                            ['empleados/create'], 
+                            [
+                                'class' => 'btn btn-success',
+                                'title' => 'Crear nuevo empleado',
+                                'target' => '_blank',
+                                'style' => 'white-space: nowrap;'
+                            ]) ?>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
