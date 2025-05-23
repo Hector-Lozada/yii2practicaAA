@@ -4,6 +4,8 @@ use app\models\Tareas;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
+use yii\helpers\ArrayHelper;
+use app\models\Proyectos;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
 /** @var yii\web\View $this */
@@ -25,23 +27,28 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+    'dataProvider' => $dataProvider,
+    'filterModel' => $searchModel,
+    'columns' => [
+        ['class' => 'yii\grid\SerialColumn'],
 
-            'idtareas',
-            'titulo',
-            'descripcion:ntext',
-            'proyecto_id',
-            [
-                'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, Tareas $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'idtareas' => $model->idtareas]);
-                 }
-            ],
+        'idtareas',
+        'titulo',
+        'descripcion:ntext',
+        [
+            'attribute' => 'proyecto_id',
+            'label' => 'Proyecto',
+            'value' => 'proyecto.nombre', // Accede directamente a la relación
+            'filter' => ArrayHelper::map(Proyectos::find()->all(), 'idproyectos', 'nombre'),
         ],
-    ]); ?>
+        [
+            'class' => ActionColumn::className(),
+            'urlCreator' => function ($action, Tareas $model, $key, $index, $column) {
+                return Url::toRoute([$action, 'idtareas' => $model->idtareas]);
+            }
+        ],
+    ],
+]); ?>
 
     <?php Pjax::end(); ?>
 

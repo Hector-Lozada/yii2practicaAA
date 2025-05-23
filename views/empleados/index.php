@@ -34,8 +34,35 @@ $this->params['breadcrumbs'][] = $this->title;
             'nombre',
             'email:email',
             'cargo',
-            'image_path',
-            //'fecha_ingreso',
+            [
+    'attribute' => 'image_path',
+    'format' => 'html',
+    'value' => function($model) {
+        // Verifica si hay una imagen
+        if ($model->image_path) {
+            // Genera la URL correcta (ajusta según tu estructura)
+            $rutaImagen = Url::to('@web/uploads/images/' . basename($model->image_path));
+            
+            // Muestra la imagen con un estilo y texto alternativo
+            return Html::img(
+                $rutaImagen,
+                [
+                    'style' => 'width: 50px; height: auto;',
+                    'alt' => 'Foto de ' . $model->nombre,
+                ]
+            );
+        }
+        // Si no hay imagen, muestra un placeholder o texto
+        return Html::img(
+            'https://via.placeholder.com/50',
+            ['style' => 'width: 50px; height: auto;', 'alt' => 'Sin imagen']
+        );
+    },
+],
+            [
+                'attribute' => 'fecha_ingreso',
+                'format' => ['date', 'php:Y-m-d'], // Formato de fecha sin hora
+            ],
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, Empleados $model, $key, $index, $column) {

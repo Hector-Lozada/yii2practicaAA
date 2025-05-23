@@ -3,9 +3,13 @@
 use app\models\Asignaciones;
 use yii\helpers\Html;
 use yii\helpers\Url;
+use yii\helpers\ArrayHelper;
+use app\models\Tareas;
+use app\models\Empleados;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
+
 /** @var yii\web\View $this */
 /** @var app\models\AsignacionesSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
@@ -31,14 +35,34 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
 
             'idasignaciones',
-            'tarea_id',
-            'empleado_id',
-            'fecha_asignacion',
+            [
+                'attribute' => 'tarea_id',
+                'label' => 'Tarea',
+                'value' => function($model) {
+                    return $model->tarea->titulo ?? 'Sin tarea';
+                },
+                'filter' => ArrayHelper::map(Tareas::find()->all(), 'idtareas', 'titulo'),
+            ],
+            [
+                'attribute' => 'empleado_id',
+                'label' => 'Empleado',
+                'value' => function($model) {
+                    return $model->empleado->nombre ?? 'Sin asignar';
+                },
+                'filter' => ArrayHelper::map(Empleados::find()->all(), 'idempleados', 'nombre'),
+            ],
+            [
+                'attribute' => 'fecha_asignacion',
+                'format' => ['date', 'php:Y-m-d'],
+                'filter' => Html::activeTextInput($searchModel, 'fecha_asignacion', [
+                    'class' => 'form-control'
+                ]),
+            ],
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, Asignaciones $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'idasignaciones' => $model->idasignaciones]);
-                 }
+                }
             ],
         ],
     ]); ?>

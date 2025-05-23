@@ -7,6 +7,7 @@ use app\models\TareasSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use Yii;
 
 /**
  * TareasController implements the CRUD actions for Tareas model.
@@ -70,8 +71,18 @@ class TareasController extends Controller
         $model = new Tareas();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'idtareas' => $model->idtareas]);
+            if ($model->load($this->request->post())) {
+                // DEBUG: Mostrar datos recibidos
+                Yii::debug($model->attributes);
+                
+                if ($model->save()) {
+                    Yii::$app->session->setFlash('success', 'Tarea creada correctamente');
+                    return $this->redirect(['view', 'idtareas' => $model->idtareas]);
+                } else {
+                    // DEBUG: Mostrar errores de validación
+                    Yii::error($model->errors);
+                    Yii::$app->session->setFlash('error', 'Error al guardar la tarea: ' . $this->getErrorMessages($model));
+                }
             }
         } else {
             $model->loadDefaultValues();
@@ -93,8 +104,13 @@ class TareasController extends Controller
     {
         $model = $this->findModel($idtareas);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'idtareas' => $model->idtareas]);
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            if ($model->save()) {
+                Yii::$app->session->setFlash('success', 'Tarea actualizada correctamente');
+                return $this->redirect(['view', 'idtareas' => $model->idtareas]);
+            } else {
+                Yii::$app->session->setFlash('error', 'Error al actualizar la tarea: ' . $this->getErrorMessages($model));
+            }
         }
 
         return $this->render('update', [
@@ -112,7 +128,7 @@ class TareasController extends Controller
     public function actionDelete($idtareas)
     {
         $this->findModel($idtareas)->delete();
-
+        Yii::$app->session->setFlash('success', 'Tarea eliminada correctamente');
         return $this->redirect(['index']);
     }
 
@@ -130,5 +146,19 @@ class TareasController extends Controller
         }
 
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+    }
+    
+    /**
+     * Helper para obtener mensajes de error del modelo
+     * @param \yii\db\ActiveRecord $model
+     * @return string
+     */
+    protected function getErrorMessages($model)
+    {
+        $errors = [];
+        foreach ($model->errors as $attributeErrors) {
+            $errors = array_merge($errors, $attributeErrors);
+        }
+        return implode(', ', $errors);
     }
 }
