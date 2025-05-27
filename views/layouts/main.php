@@ -9,6 +9,7 @@ use yii\bootstrap5\Breadcrumbs;
 use yii\bootstrap5\Html;
 use yii\bootstrap5\Nav;
 use yii\bootstrap5\NavBar;
+use yii\helpers\Url;
 
 AppAsset::register($this);
 
@@ -19,6 +20,9 @@ $this->registerMetaTag(['name' => 'description', 'content' => $this->params['met
 $this->registerMetaTag(['name' => 'keywords', 'content' => $this->params['meta_keywords'] ?? '']);
 $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii::getAlias('@web/favicon.ico')]);
 
+// Color característico UTELVT (puedes cambiarlo por el verde exacto de la universidad)
+$utelvtGreen = '#00723A';
+
 // Obtén el rol del usuario autenticado (si hay uno)
 $rol = (Yii::$app->user->isGuest) ? null : Yii::$app->user->identity->rol;
 ?>
@@ -28,21 +32,28 @@ $rol = (Yii::$app->user->isGuest) ? null : Yii::$app->user->identity->rol;
 <head>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
-    <!-- Fondo personalizado: imagen o color -->
+    <!-- Estilos personalizados -->
     <style>
-        body {
-            <?php /* EJEMPLO DE FONDO DE COLOR:
-            background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
-            */ ?>
-
-            <?php /* EJEMPLO DE FONDO DE IMAGEN:
-            background: url('<?= Yii::getAlias("@web/images/fondo.jpg") ?>') no-repeat center center fixed;
-            background-size: cover;
-            */ ?>
+        .utelvt-navbar {
+            background: linear-gradient(90deg, <?= $utelvtGreen ?> 80%, #005b2a 100%);
+            box-shadow: 0 2px 16px rgba(0,0,0,0.09);
         }
         .navbar-nav .nav-link.active {
             font-weight: bold;
-            color: #ffc107 !important;
+            color: #f7d600 !important;
+        }
+        .navbar-nav .dropdown-menu {
+            background-color: #e8f5e9;
+        }
+        .navbar-nav .nav-link,
+        .navbar-brand {
+            color: #fff !important;
+        }
+        .navbar-nav .nav-link:hover,
+        .navbar-nav .dropdown-item:hover {
+            color: #ffe066 !important;
+            background-color: #129d5f !important;
+            border-radius: .25rem;
         }
         .card-main-content {
             background: rgba(255,255,255,0.93);
@@ -50,6 +61,15 @@ $rol = (Yii::$app->user->isGuest) ? null : Yii::$app->user->identity->rol;
             border-radius: 10px;
             padding: 2rem 1.5rem;
             margin-top: 32px;
+        }
+        .navbar .navbar-brand .utelvt-text {
+            font-weight: bold;
+            font-size: 1.4rem;
+            color: #fff;
+            letter-spacing: 2px;
+            margin-left: 8px;
+            vertical-align: middle;
+            text-shadow: 1px 1px 8px rgba(0,0,0,0.13);
         }
     </style>
 </head>
@@ -59,12 +79,28 @@ $rol = (Yii::$app->user->isGuest) ? null : Yii::$app->user->identity->rol;
 <header id="header">
     <?php
     NavBar::begin([
-        'brandLabel' => Yii::$app->name,
-        'brandUrl' => Yii::$app->homeUrl,
-        'options' => ['class' => 'navbar-expand-md navbar-dark bg-dark fixed-top shadow']
-    ]);
+    'brandLabel' =>
+        // Logo con fondo circular blanco y sombra
+        Html::tag('span',
+            Html::img('@web/images/logo.png', [
+                'alt' => 'UTELVT Logo',
+                'style' => 'height:32px; width:32px; object-fit:contain;'
+            ]),
+            [
+                'style' =>
+                    'display:inline-block; vertical-align:middle; ' .
+                    'background:#fff; border-radius:50%; ' .
+                    'box-shadow: 0 2px 8px rgba(0,0,0,0.10); ' .
+                    'padding:4px; margin-right:10px;'
+            ]
+        )
+        .
+        '<span class="utelvt-text">UTELVT</span>',
+    'brandUrl' => Yii::$app->homeUrl,
+    'options' => ['class' => 'navbar-expand-md utelvt-navbar fixed-top']
+]);
     $menuItems = [
-        ['label' => 'Home', 'url' => ['/site/index']],
+        ['label' => 'Inicio', 'url' => ['/site/index']],
         [
             'label' => 'Gestión de Proyectos',
             'items' => array_filter([

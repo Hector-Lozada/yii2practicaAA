@@ -37,7 +37,7 @@ $this->title = 'UTELVT';
 <div class="site-index">
     <div class="overlay">
         <h1 class="display-4">Bienvenido a UTELVT</h1>
-        <p class="lead">Sistema de gestión de proyectos y tareas para la Universidad Técnica de El Valle de Tulancingo.</p>
+        <p class="lead">Sistema de gestión de proyectos y tareas para la Universidad Técnica de Esmeraldas.</p>
         <img src="<?= Yii::getAlias('@web/uploads/fondo/fondo.jpg') ?>" alt="Fondo UTELVT" style="width: 300px; margin: 2rem auto 1rem auto; display: block; border-radius: 12px; box-shadow: 0 2px 16px rgba(0,0,0,0.08);">
     </div>
 </div>
