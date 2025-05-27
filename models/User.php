@@ -2,73 +2,60 @@
 
 namespace app\models;
 
-class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
+use Yii;
+use yii\db\ActiveRecord;
+use yii\web\IdentityInterface;
+
+/**
+ * Modelo Usuarios para autenticación y gestión de usuarios.
+ *
+ * @property int $id
+ * @property string $username
+ * @property string $email
+ * @property string $password
+ * @property string $rol
+ * @property string $nombre
+ * @property string $apellido
+ * @property string $creado_en
+ * @property string $actualizado_en
+ * @property int $activo
+ */
+class Usuarios extends ActiveRecord implements IdentityInterface
 {
-    public $id;
-    public $username;
-    public $password;
-    public $authKey;
-    public $accessToken;
-
-    private static $users = [
-        '100' => [
-            'id' => '100',
-            'username' => 'admin',
-            'password' => 'admin',
-            'authKey' => 'test100key',
-            'accessToken' => '100-token',
-        ],
-        '101' => [
-            'id' => '101',
-            'username' => 'demo',
-            'password' => 'demo',
-            'authKey' => 'test101key',
-            'accessToken' => '101-token',
-        ],
-    ];
-
-
     /**
      * {@inheritdoc}
+     */
+    public static function tableName()
+    {
+        return 'usuarios';
+    }
+
+    /**
+     * Busca usuario por ID (requerido por IdentityInterface)
      */
     public static function findIdentity($id)
     {
-        return isset(self::$users[$id]) ? new static(self::$users[$id]) : null;
+        return static::findOne(['id' => $id, 'activo' => 1]);
     }
 
     /**
-     * {@inheritdoc}
+     * Busca usuario por access token (no lo uses si no tienes API tokens)
      */
     public static function findIdentityByAccessToken($token, $type = null)
     {
-        foreach (self::$users as $user) {
-            if ($user['accessToken'] === $token) {
-                return new static($user);
-            }
-        }
-
-        return null;
+        return static::findOne(['accessToken' => $token, 'activo' => 1]);
     }
 
     /**
-     * Finds user by username
-     *
-     * @param string $username
-     * @return static|null
+     * Busca usuario por username
      */
     public static function findByUsername($username)
     {
-        foreach (self::$users as $user) {
-            if (strcasecmp($user['username'], $username) === 0) {
-                return new static($user);
-            }
-        }
-
-        return null;
+        return static::findOne(['username' => $username, 'activo' => 1]);
     }
 
     /**
-     * {@inheritdoc}
+     * Devuelve ID del usuario (requerido por IdentityInterface)
      */
     public function getId()
     {
@@ -76,29 +63,30 @@ class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Devuelve authKey (si lo usas, puedes agregar el campo en tu tabla)
      */
     public function getAuthKey()
     {
-        return $this->authKey;
+        // Si tienes el campo authKey en la tabla, úsalo
+        return $this->authKey ?? null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function validateAuthKey($authKey)
     {
-        return $this->authKey === $authKey;
+        return $this->getAuthKey() === $authKey;
     }
 
     /**
-     * Validates password
-     *
-     * @param string $password password to validate
-     * @return bool if password provided is valid for current user
+     * Valida la contraseña
+     * 
+     * IMPORTANTE: Usa password_hash y password_verify para mayor seguridad.
      */
     public function validatePassword($password)
     {
+        // Si guardas el hash con password_hash:
+        // return password_verify($password, $this->password);
+
+        // Si guardas la contraseña en texto plano (NO recomendado):
         return $this->password === $password;
     }
 }

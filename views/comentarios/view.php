@@ -1,4 +1,4 @@
-<?php
+<?php 
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
@@ -15,6 +15,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
+    <?php if (Yii::$app->user->identity->rol === 'admin'): ?>
     <p>
         <?= Html::a(Yii::t('app', 'Update'), ['update', 'idcomentarios' => $model->idcomentarios], ['class' => 'btn btn-primary']) ?>
         <?= Html::a(Yii::t('app', 'Delete'), ['delete', 'idcomentarios' => $model->idcomentarios], [
@@ -25,16 +26,25 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         ]) ?>
     </p>
+<?php endif; ?>
 
     <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'idcomentarios',
-            'tarea_id',
-            'empleado_id',
-            'comentario:ntext',
-            'fecha',
+    'model' => $model,
+    'attributes' => [
+        'idcomentarios',
+        [
+            'attribute' => 'tarea_id',
+            'value' => $model->tarea ? $model->tarea->titulo : null, // Ajusta 'nombre' al campo correcto de Tarea
+            'label' => 'Tarea'
         ],
-    ]) ?>
+        [
+            'attribute' => 'empleado_id',
+            'value' => $model->empleado ? $model->empleado->nombre : null, // Ajusta 'nombre' al campo correcto de Empleado
+            'label' => 'Empleado'
+        ],
+        'comentario:ntext',
+        'fecha',
+    ],
+]) ?>
 
 </div>

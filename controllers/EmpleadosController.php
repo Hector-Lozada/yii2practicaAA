@@ -9,6 +9,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\UploadedFile;
 use Yii;
+use yii\filters\AccessControl;
 /**
  * EmpleadosController implements the CRUD actions for Empleados model.
  */
@@ -19,17 +20,21 @@ class EmpleadosController extends Controller
      */
     public function behaviors()
     {
-        return array_merge(
-            parent::behaviors(),
-            [
-                'verbs' => [
-                    'class' => VerbFilter::className(),
-                    'actions' => [
-                        'delete' => ['POST'],
+        return [
+            'access' => [
+                'class' => AccessControl::class,
+                'only' => ['index', 'view', 'create', 'update', 'delete', 'admin'], // ajusta las acciones según tu controlador
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@'], // Solo usuarios autenticados
+                        'matchCallback' => function ($rule, $action) {
+                            return \Yii::$app->user->identity->rol === 'admin';
+                        }
                     ],
                 ],
-            ]
-        );
+            ],
+        ];
     }
 
     /**

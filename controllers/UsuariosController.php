@@ -2,17 +2,17 @@
 
 namespace app\controllers;
 
-use app\models\Asignaciones;
-use app\models\AsignacionesSearch;
+use app\models\Usuarios;
+use app\models\UsuariosSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 
 /**
- * AsignacionesController implements the CRUD actions for Asignaciones model.
+ * UsuariosController implements the CRUD actions for Usuarios model.
  */
-class AsignacionesController extends Controller
+class UsuariosController extends Controller
 {
     /**
      * @inheritDoc
@@ -22,17 +22,11 @@ class AsignacionesController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::class,
-                'only' => ['index', 'view', 'create', 'update', 'delete'],
+                'only' => ['index', 'view', 'create', 'update', 'delete', 'admin'], // ajusta las acciones según tu controlador
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'view'],
-                        'roles' => ['@'],
-                    ],
-                    [
-                        'allow' => true,
-                        'actions' => ['create', 'update', 'delete'],
-                        'roles' => ['@'],
+                        'roles' => ['@'], // Solo usuarios autenticados
                         'matchCallback' => function ($rule, $action) {
                             return \Yii::$app->user->identity->rol === 'admin';
                         }
@@ -43,13 +37,13 @@ class AsignacionesController extends Controller
     }
 
     /**
-     * Lists all Asignaciones models.
+     * Lists all Usuarios models.
      *
      * @return string
      */
     public function actionIndex()
     {
-        $searchModel = new AsignacionesSearch();
+        $searchModel = new UsuariosSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
@@ -59,30 +53,30 @@ class AsignacionesController extends Controller
     }
 
     /**
-     * Displays a single Asignaciones model.
-     * @param int $idasignaciones Idasignaciones
+     * Displays a single Usuarios model.
+     * @param int $id ID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($idasignaciones)
+    public function actionView($id)
     {
         return $this->render('view', [
-            'model' => $this->findModel($idasignaciones),
+            'model' => $this->findModel($id),
         ]);
     }
 
     /**
-     * Creates a new Asignaciones model.
+     * Creates a new Usuarios model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
     public function actionCreate()
     {
-        $model = new Asignaciones();
+        $model = new Usuarios();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'idasignaciones' => $model->idasignaciones]);
+                return $this->redirect(['view', 'id' => $model->id]);
             }
         } else {
             $model->loadDefaultValues();
@@ -94,18 +88,18 @@ class AsignacionesController extends Controller
     }
 
     /**
-     * Updates an existing Asignaciones model.
+     * Updates an existing Usuarios model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $idasignaciones Idasignaciones
+     * @param int $id ID
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($idasignaciones)
+    public function actionUpdate($id)
     {
-        $model = $this->findModel($idasignaciones);
+        $model = $this->findModel($id);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'idasignaciones' => $model->idasignaciones]);
+            return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
@@ -114,29 +108,29 @@ class AsignacionesController extends Controller
     }
 
     /**
-     * Deletes an existing Asignaciones model.
+     * Deletes an existing Usuarios model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $idasignaciones Idasignaciones
+     * @param int $id ID
      * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($idasignaciones)
+    public function actionDelete($id)
     {
-        $this->findModel($idasignaciones)->delete();
+        $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
     }
 
     /**
-     * Finds the Asignaciones model based on its primary key value.
+     * Finds the Usuarios model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $idasignaciones Idasignaciones
-     * @return Asignaciones the loaded model
+     * @param int $id ID
+     * @return Usuarios the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($idasignaciones)
+    protected function findModel($id)
     {
-        if (($model = Asignaciones::findOne(['idasignaciones' => $idasignaciones])) !== null) {
+        if (($model = Usuarios::findOne(['id' => $id])) !== null) {
             return $model;
         }
 

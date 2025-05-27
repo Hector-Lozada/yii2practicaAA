@@ -7,6 +7,7 @@ use app\models\ComentariosSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 
 /**
  * ComentariosController implements the CRUD actions for Comentarios model.
@@ -17,19 +18,31 @@ class ComentariosController extends Controller
      * @inheritDoc
      */
     public function behaviors()
-    {
-        return array_merge(
-            parent::behaviors(),
-            [
-                'verbs' => [
-                    'class' => VerbFilter::className(),
-                    'actions' => [
-                        'delete' => ['POST'],
-                    ],
+{
+    return [
+        'access' => [
+            'class' => AccessControl::class,
+            'only' => ['index', 'view', 'create', 'update', 'delete'],
+            'rules' => [
+                [
+                    // Permitir ver y crear a cualquier usuario autenticado
+                    'allow' => true,
+                    'actions' => ['index', 'view', 'create'],
+                    'roles' => ['@'],
                 ],
-            ]
-        );
-    }
+                [
+                    // Solo el admin puede editar o eliminar
+                    'allow' => true,
+                    'actions' => ['update', 'delete'],
+                    'roles' => ['@'],
+                    'matchCallback' => function ($rule, $action) {
+                        return \Yii::$app->user->identity->rol === 'admin';
+                    }
+                ],
+            ],
+        ],
+    ];
+}
 
     /**
      * Lists all Comentarios models.
